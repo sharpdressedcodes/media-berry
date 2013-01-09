@@ -26,7 +26,7 @@ SERVER_PORT = 29876
 SERVER_ADDRESS = (SERVER_HOST,SERVER_PORT)    
 BUFFER_SIZE = 4096    
 MAX_CONNECTIONS = 10
-VIDEO_PLAYER_PATH = "/usr/bin/vlc"
+VIDEO_PLAYER_PATH = "/usr/bin/omxplayer"
 
 # Class for parsing an http request
 class HTTPRequest(BaseHTTPRequestHandler):
