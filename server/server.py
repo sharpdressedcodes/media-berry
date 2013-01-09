@@ -60,9 +60,6 @@ serv.bind((SERVER_ADDRESS))
 # Set the maximum number of queued connections
 serv.listen(10)
 
-# Set variable for the current url
-currentUrl = ""
-
 while True:
 	# Accept the connection	
 	conn,SERVER_ADDRESS = serv.accept() 
@@ -87,8 +84,4 @@ while True:
 
 		# If url is correct -> open with video player
 		if url.startswith("http"):
-
-			# Is the submitted url different from the current url?
-			if url != currentUrl:			
-				subprocess.Popen([VIDEO_PLAYER_PATH, url])
-				currentUrl = url
+			subprocess.Popen([VIDEO_PLAYER_PATH, url])			
