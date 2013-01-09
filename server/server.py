@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
-# Example URL for testing:
+# Example URLs for testing:
 # http://localhost:29876/http%3A%2F%2Fwww.kaba.de%2Fbekannter-versender%2Fmedia%2F497816%2Fv9%2FMP4VideoFile%2Ffilm-1-3-final.mp4
+# http://localhost:29876/http%3A%2F%2Fwww.kaba.ch%2Fmedia%2F474122%2Fv8%2FMP4VideoFile%2Fzeiterfassung-neu-definiert-terminal-b-web-93-00.mp4
 
 from socket import *
 import subprocess
@@ -58,7 +59,10 @@ serv.bind((SERVER_ADDRESS))
 
 # Set the maximum number of queued connections
 serv.listen(10)
- 
+
+# Set variable for the current url
+currentUrl = ""
+
 while True:
 	# Accept the connection	
 	conn,SERVER_ADDRESS = serv.accept() 
@@ -83,4 +87,8 @@ while True:
 
 		# If url is correct -> open with video player
 		if url.startswith("http"):
-			subprocess.Popen([VIDEO_PLAYER_PATH, url])
+
+			# Is the submitted url different from the current url?
+			if url != currentUrl:			
+				subprocess.Popen([VIDEO_PLAYER_PATH, url])
+				currentUrl = url
