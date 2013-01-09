@@ -15,6 +15,7 @@ SERVER_HOST = ""
 SERVER_PORT = 29876    
 SERVER_ADDRESS = (SERVER_HOST,SERVER_PORT)    
 BUFFER_SIZE = 4096    
+MAX_CONNECTIONS = 10
 VIDEO_PLAYER_PATH = "/usr/bin/vlc"
 
 # Class for parsing an http request
@@ -58,7 +59,7 @@ serv = socket( AF_INET,SOCK_STREAM)
 serv.bind((SERVER_ADDRESS)) 
 
 # Set the maximum number of queued connections
-serv.listen(10)
+serv.listen(MAX_CONNECTIONS)
 
 while True:
 	# Accept the connection	
