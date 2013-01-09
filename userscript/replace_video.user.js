@@ -1,10 +1,10 @@
 // ==UserScript==
 // @match 	        http://*/*
-// @name            HTML5 video replace
+// @name            HTML5 video replacement
 // @namespace       media-berry
-// @description     Replaces HTML5 to local link to start native player
+// @description     Replaces HTML5 to local link starting native player
 // @include         *
-// @version         0.1
+// @version         0.5
 // ==/UserScript==
 // a function that loads jQuery and calls a callback function when jQuery has finished loading
 function addJQuery(callback) {
