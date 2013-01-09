@@ -1,5 +1,5 @@
 // ==UserScript==
-// @match http://www.google.com/*
+// @match 	    http://*/*
 // @name            HTML5 video replace
 // @namespace       media-berry
 // @description     Replaces HTML5 to local link to start native player
