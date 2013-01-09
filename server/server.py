@@ -9,13 +9,16 @@ from BaseHTTPServer import BaseHTTPRequestHandler
 from StringIO import StringIO
 from urllib import unquote
 
-#let's set up some constants
-HOST = ''    #we are the host
-PORT = 29876    #arbitrary port not currently in use
-ADDR = (HOST,PORT)    #we need a tuple for the address
-BUFSIZE = 4096    #reasonably sized buffer for data
+# Server configuration
+SERVER_HOST = ""    
+SERVER_PORT = 29876    
+SERVER_ADDRESS = (SERVER_HOST,SERVER_PORT)    
+BUFFER_SIZE = 4096    
+VIDEO_PLAYER_PATH = "/usr/bin/vlc"
 
+# Class for parsing an http request
 class HTTPRequest(BaseHTTPRequestHandler):
+
 	def __init__(self, request_text):
 		self.rfile = StringIO(request_text)
 		self.raw_requestline = self.rfile.readline()
@@ -25,15 +28,18 @@ class HTTPRequest(BaseHTTPRequestHandler):
     	def send_error(self, code, message):
 		self.error_code = code
 		self.error_message = message
- 
-def getDataFromSocket(sck):
+
+# Function to read text from a socket
+def readTextFromSocket(sck):
 
 	text = ""
 
-	while 1:
+	while True:
+
 		line = ""
+
 		try:
-			line = sck.recv(BUFSIZE)			
+			line = sck.recv(BUFFER_SIZE)			
 		except socket.timeout:
 			break
 
@@ -41,20 +47,35 @@ def getDataFromSocket(sck):
 			break
 
 		text += line
+
 		return text
  
-# now we create a new socket object (serv)
-# see the python docs for more information on the socket types/flags
+# Now we create a new socket object
 serv = socket( AF_INET,SOCK_STREAM)      
  
-#bind our socket to the address
-serv.bind((ADDR))    #the double parens are to create a tuple with one element
-serv.listen(5)    #5 is the maximum number of queued connections we'll allow
+# Bind our socket to the server address
+serv.bind((SERVER_ADDRESS)) 
+
+# Set the maximum number of queued connections
+serv.listen(10)
  
-while 1:
-	conn,addr = serv.accept() #accept the connection	
-	text = getDataFromSocket(conn)
+while True:
+	# Accept the connection	
+	conn,SERVER_ADDRESS = serv.accept() 
+
+	# Read the string from the socket
+	text = readTextFromSocket(conn)
+	
+	# Create http request from string
 	request = HTTPRequest(text)
-	url = unquote(request.path[1:])
-	subprocess.Popen(["/usr/bin/vlc", url])
+
+	# Parse the url from the request
+	url = unquote(request.path[1:])	
+
+	# close the client connection
 	conn.close()
+
+	# If url is correct -> open with video player
+	if url.startswith("http"):
+		subprocess.Popen([VIDEO_PLAYER_PATH, url])
+
