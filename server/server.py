@@ -69,13 +69,18 @@ while True:
 	# Create http request from string
 	request = HTTPRequest(text)
 
-	# Parse the url from the request
-	url = unquote(request.path[1:])	
+	# Send dummy http response
+	conn.send("HTTP/1.1 200 OK\nContent-type: text/plain\n\nOK")
 
 	# close the client connection
 	conn.close()
 
-	# If url is correct -> open with video player
-	if url.startswith("http"):
-		subprocess.Popen([VIDEO_PLAYER_PATH, url])
+	# Is a path submitted in the request?	
+	if hasattr(request, 'path'):
+		
+		# Parse the url from the request
+		url = unquote(request.path[1:])
 
+		# If url is correct -> open with video player
+		if url.startswith("http"):
+			subprocess.Popen([VIDEO_PLAYER_PATH, url])
