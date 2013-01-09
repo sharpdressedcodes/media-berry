@@ -71,7 +71,7 @@ while True:
 	request = HTTPRequest(text)
 
 	# Send dummy http response
-	conn.send("HTTP/1.1 200 OK\nContent-type: text/plain\n\nOK")
+	conn.send("HTTP/1.1 200 OK\nContent-type: text/plain;charset=UTF-8\n\nOK")
 
 	# close the client connection
 	conn.close()
