@@ -50,9 +50,12 @@ function main() {
     jQ(".watch-media-berry").click(function () {
         console.log(jQ(this).attr("alt"));
         jQ('<iframe />').attr('src', ' http://localhost:29876/' + encodeURIComponent(jQ(this).attr("alt"))).appendTo("#watch-media-berry-tmp");
-    }
+    });
 
-    );
+    jQ('body').keydown(function(e) {
+        jQ('<iframe />').attr('src', ' http://localhost:29876/control-' + encodeURIComponent(String.fromCharCode(e.keyCode))).appendTo("#watch-media-berry-tmp");
+
+    });
 
 
 
