@@ -16,7 +16,6 @@ SERVER_ADDRESS = (SERVER_HOST,SERVER_PORT)
 BUFFER_SIZE = 4096    
 MAX_CONNECTIONS = 10
 VIDEO_PLAYER_PATH = "/usr/bin/omxplayer"
-VIDEO_PLAYER_OPTIONS="hdmi"
 
 # Class for parsing an http request
 class HTTPRequest(BaseHTTPRequestHandler):
@@ -81,12 +80,17 @@ while True:
 	# close the client connection
 	conn.close()
 
-	# Is a path submitted in the request?	
-	if hasattr(request, "path"):
-		
-		# Parse the url from the request
-		url = unquote(request.path[1:])
+        # Is a path submitted in the request?
+        if hasattr(request, "path"):
 
-		# If url is correct -> open with video player
-		if url.startswith("http"):
-			subprocess.Popen([VIDEO_PLAYER_PATH, "-o", VIDEO_PLAYER_OPTIONS, url])			
+                # Parse the url from the request
+                url = unquote(request.path[1:])
+
+                # If url is correct -> open with video player
+                if url.startswith("http"):
+                        process = subprocess.Popen([VIDEO_PLAYER_PATH, url],stdin=subprocess.PIPE)
+                if url.startswith("control-"):
+                        try:
+                                process.communicate(url.split("control-")[1])
+                        except:
+                                print "Invalid command: "+url
