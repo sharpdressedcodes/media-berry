@@ -1,18 +1,7 @@
 #!/usr/bin/python
 
-### BEGIN INIT INFO
-# Provides: media-berry-server
-# Required-Start: $remote_fs $syslog
-# Required-Stop: $remote_fs $syslog
-# Default-Start: 2 3 4 5
-# Default-Stop: 0 1 6
-# Short-Description: Start Media Berry Server at boot time
-# Description: Start Media Berry Server at boot time
-### END INIT INFO
-
-# Example URLs for testing:
+# Example URL for testing:
 # http://localhost:29876/http%3A%2F%2Fwww.kaba.de%2Fbekannter-versender%2Fmedia%2F497816%2Fv9%2FMP4VideoFile%2Ffilm-1-3-final.mp4
-# http://localhost:29876/http%3A%2F%2Fwww.kaba.ch%2Fmedia%2F474122%2Fv8%2FMP4VideoFile%2Fzeiterfassung-neu-definiert-terminal-b-web-93-00.mp4
 
 from socket import *
 import subprocess
