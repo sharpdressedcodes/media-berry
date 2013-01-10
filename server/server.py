@@ -10,7 +10,7 @@ from StringIO import StringIO
 from urllib import unquote
 
 # Server configuration
-SERVER_HOST = ""    
+SERVER_HOST = "127.0.0.1"    
 SERVER_PORT = 29876    
 SERVER_ADDRESS = (SERVER_HOST,SERVER_PORT)    
 BUFFER_SIZE = 4096    
@@ -60,7 +60,11 @@ serv.bind((SERVER_ADDRESS))
 # Set the maximum number of queued connections
 serv.listen(MAX_CONNECTIONS)
 
+# Logging
+print "Start listening for video urls ..."
+
 while True:
+	
 	# Accept the connection	
 	conn,SERVER_ADDRESS = serv.accept() 
 
