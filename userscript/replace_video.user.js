@@ -23,26 +23,36 @@ function addJQuery(callback) {
 function main() {
     // Note, jQ replaces $ to avoid conflicts.
     //alert("There are " + jQ('a').length + " links on this page.");
-    var videoLinks = [];
+
     jQ("<div id='watch-media-berry-tmp' style='display: none' />").appendTo('body');
 
     jQ("video").each(function (index) {
 
-        // TODO wir nehmen jetzt einfach mal das erste
+        // we use the first source tag - maybe we should use mp4
         var src = jQ(this).children("source:first").attr("src");
 
-        videoLinks[index] = convertToAbsolut(src);
+        src = convertToAbsolut(src);
 
-        if (videoLinks[index]) {
-
-            jQ(this).replaceWith('<img class="watch-media-berry" alt="'+videoLinks[index]+'" style="cursor: pointer;" src="http://cdn1.iconfinder.com/data/icons/realistiK-new/128x128/actions/player_play.png">');
+        if (src) {
+            jQ(this).replaceWith('<div class="media-berry-video"><img class="watch-media-berry" alt="' + src + '" style="cursor: pointer;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAADNQTFRFBAcHwMHBFBcX7+/voaKiQ0VFIyYm4ODggYODYmRk0NDQU1VVsLGxkZKSMzY2cnR0////l9YmXAAAABF0Uk5T/////////////////////wAlrZliAAAC7klEQVR42uyayW4sIQxFzTzUlP//2tcvUhaRuuDamGpFwote4tM2UNi+9PVhowWwABbAAlgAC2ABLIA/CpD2vAVLPxZC9vUxAOdLpDdmtyPNB3A+UMNONgMPIBVLPdvMNAATCLLTTwFIoPvvTWnUAVwmlm1OF8BEYpo9NAEuEhgWBATAnSSyWHUAqiWhWa8BsIv9v8yPA3gasjIKMOi/T9AB2GnYjhGAascBOvugCeA0/BNVMcCp4p+sEwJcpGRBBmBIzQ4JgIt6AJQEAJei/0YSbgESqZpnAwRdgMgFMETPhICeCcB9CG4AanOxy+qF4AagNNcy7lILwXsA117r9eiu/BwZBoAHlvLcPBQGwIn8F26pYHGABAYz8fKwwwAezuYeR3PwFmDDtxMnDxEGsJz9zMhDAgES80DBedhBgJ17otE8ZBAg868ULA8BBAiSOw0p4ONMgFfg+lcjCCC81b/SJjgGmgD9PJjZAL08YABpBKCdBwzADAE08/AMgCuDAHUM4LAf3YTm/OgpcOWzx/Do3YUVAzhlAObUuopF34Je9O+epSQpzI0g+pzPsWcDgM30CwSoTID+V7BRHr59lPIAMlwiVRQgMAAYowwLP8sPGACO/vcEAwaoKEBmFageL06xhw13kORwgAwAJG6HYGOU56kLwK3Nb3s0JOlRGV5V3GoP3AG0qzMv6aFlXptOs1Hc7NnTrFkRGID7Vm18JgD3AOaZADTa9arN2uj4AMkqAhjJyObQ819kQ6swPwFtAKeVhCqdG1Yd/14+uvWTN0B/eJ1n+++O78uo/9MNChjKXP+AhGNogFm6ShpAxOKn5R+V8Rg74/xxhExJJCSAZESolEtwHEE1GSpm447p4q4u5+OM6WxGxXQcQaODC7Hi8FVZkk53RNV/zwb4XzB0bsbNMxfky3rdXm7iYDfv2MvJhM3VX+H3hgjlkCmbR6Td1Rjjj9ePGVhkidsXwAJYAAtgASyABbAAPg7wT4ABAEYSjudgB/2SAAAAAElFTkSuQmCC"></div>');
         }
     });
 
-    jQ(".watch-media-berry").click(function(){
+    jQ(".media-berry-video").css("border","8px solid #969696");
+    jQ(".media-berry-video").css("width","230px");
+    jQ(".media-berry-video").css("height","132px");
+    jQ(".media-berry-video").css("background","#E0E0E0");
+    jQ(".media-berry-video").css("border-radius","5px");
+    jQ(".media-berry-video").css("margin","auto");
+    jQ(".media-berry-video").css("text-align","center");
+
+
+    jQ(".watch-media-berry").click(function () {
         console.log(jQ(this).attr("alt"));
-        jQ('<iframe />').attr('src', ' http://localhost:29876/'+encodeURIComponent(jQ(this).attr("alt"))).appendTo("#watch-media-berry-tmp");
-    });
+        jQ('<iframe />').attr('src', ' http://localhost:29876/' + encodeURIComponent(jQ(this).attr("alt"))).appendTo("#watch-media-berry-tmp");
+    }
+
+    );
 
 
 
@@ -53,7 +63,7 @@ function main() {
         }
         if (link.indexOf(".") != 0) {
             if (link.indexOf("/") == 0) {
-               link = link.substr(1,link.length);
+                link = link.substr(1, link.length);
             }
             return getAbsolutePath() + link;
 
@@ -67,7 +77,6 @@ function main() {
         return loc.href.substring(0, loc.href.length - ((loc.pathname + loc.search + loc.hash).length - pathName.length));
     }
 }
-
 
 // load jQuery and execute the main function
 addJQuery(main);
