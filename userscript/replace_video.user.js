@@ -48,18 +48,16 @@ function main() {
 
 
     jQ(".watch-media-berry").click(function () {
-        console.log(jQ(this).attr("alt"));
-        jQ('<iframe />').attr('src', ' http://localhost:29876/' + encodeURIComponent(jQ(this).attr("alt"))).appendTo("#watch-media-berry-tmp");
+        jQ('<iframe />').attr('src', ' http://localhost:29876/play/' + encodeURIComponent(jQ(this).attr("alt"))).appendTo("#watch-media-berry-tmp");
     });
 
     jQ('body').keydown(function(e) {
-        jQ('<iframe />').attr('src', ' http://localhost:29876/control-' + encodeURIComponent(String.fromCharCode(e.keyCode))).appendTo("#watch-media-berry-tmp");
-
+        jQ('<iframe />').attr('src', ' http://localhost:29876/control/' + String.fromCharCode(e.keyCode)).appendTo("#watch-media-berry-tmp");
     });
 
 
 
-// Dirty to do this here but JQuery seems to do this in further versions
+    // Dirty to do this here but JQuery seems to do this in further versions
     function convertToAbsolut(link) {
         if (link.indexOf("http") == 0) {
             return link;

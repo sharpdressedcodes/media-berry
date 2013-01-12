@@ -20,9 +20,9 @@ MAX_CONNECTIONS = 10
 VIDEO_PLAYER_PATH = "/usr/bin/omxplayer"
 
 # Logging configuration
-filePath = os.path.abspath(__file__)
-logFile = filePath + ".log"
-logging.basicConfig(filename=logFile, level=logging.INFO)
+scriptFilePath = os.path.abspath(__file__)
+logFilePath = scriptFilePath + ".log"
+logging.basicConfig(filename=logFilePath, level=logging.INFO)
 
 # Class for parsing an http request
 class HTTPRequest(BaseHTTPRequestHandler):
@@ -89,20 +89,27 @@ while True:
 
         # Is a path submitted in the request?
         if hasattr(request, "path"):
-					
-                # Parse the url from the request
-                url = unquote(request.path[1:])
 
-                # If url is correct -> open with video player
-                if url.startswith("http"):
-			logging.info("Opening url '" + url + "' ...")
-                        process = subprocess.Popen([VIDEO_PLAYER_PATH, url],stdin=subprocess.PIPE)
+		# Parse information from request
+		pathArray = request.path.split("/")
+		action = pathArray[1]
+		
+		# Play video 
+		if action == "play":
 
-                if url.startswith("control-"):
-                        try:
-				if process.poll is None:
-					key = url.split("control-")[1]
-					logging.info("Executing command '" + key + "' ...")
-                                	process.communicate(key)
+			url = unquote(pathArray[2])							
+
+			# If url is correct -> open with video player
+	                if url.startswith("http"):
+        	                logging.info("Opening url '" + url + "' ...")
+                	        process = subprocess.Popen([VIDEO_PLAYER_PATH, url],stdin=subprocess.PIPE)
+
+		elif action == "control":
+
+			key = pathArray[2]
+
+			try:
+       	                        logging.info("Executing key '" + key + "' ...")
+               	                process.communicate(key)
                         except:
-                                logging.info("Invalid command: " + url)
+       	                        logging.error("Video player is not running")
