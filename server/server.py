@@ -82,7 +82,7 @@ while True:
 
         # Is a path submitted in the request?
         if hasattr(request, "path"):
-
+					
                 # Parse the url from the request
                 url = unquote(request.path[1:])
 
