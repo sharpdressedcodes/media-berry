@@ -5,6 +5,8 @@
 
 from socket import *
 import subprocess
+import os
+import logging
 from BaseHTTPServer import BaseHTTPRequestHandler
 from StringIO import StringIO
 from urllib import unquote
@@ -16,6 +18,11 @@ SERVER_ADDRESS = (SERVER_HOST,SERVER_PORT)
 BUFFER_SIZE = 4096    
 MAX_CONNECTIONS = 10
 VIDEO_PLAYER_PATH = "/usr/bin/omxplayer"
+
+# Logging configuration
+filePath = os.path.abspath(__file__)
+logFile = filePath + ".log"
+logging.basicConfig(filename=logFile, level=logging.INFO)
 
 # Class for parsing an http request
 class HTTPRequest(BaseHTTPRequestHandler):
@@ -61,7 +68,7 @@ serv.bind((SERVER_ADDRESS))
 serv.listen(MAX_CONNECTIONS)
 
 # Logging
-print "Start listening for video urls ..."
+logging.info("Start listening for video urls ...")
 
 while True:
 	
@@ -88,14 +95,14 @@ while True:
 
                 # If url is correct -> open with video player
                 if url.startswith("http"):
-			print "Opening url '" + url + "' ..."
+			logging.info("Opening url '" + url + "' ...")
                         process = subprocess.Popen([VIDEO_PLAYER_PATH, url],stdin=subprocess.PIPE)
 
                 if url.startswith("control-"):
                         try:
 				if process.poll is None:
 					key = url.split("control-")[1]
-					print "Routing key '" + key + "' ..."
+					logging.info("Executing command '" + key + "' ...")
                                 	process.communicate(key)
                         except:
-                                print "Invalid command: " + url
+                                logging.info("Invalid command: " + url)

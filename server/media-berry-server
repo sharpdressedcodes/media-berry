@@ -10,14 +10,14 @@
 # Description: Start Media Berry Server at boot time
 ### END INIT INFO
 
-mediaBerryHome="/opt/media-berry"
-pidFile="$mediaBerryHome/media-berry.pid"
+mediaBerryServerHome="/opt/media-berry/server"
+pidFile="$mediaBerryServerHome/server.py.pid"
 
 function running() {
 	if [ -f "$pidFile" ]
         then
 		pid=$(cat "$pidFile")
-		output=$(ps | grep -v grep | grep "$pid")
+		output=$(ps aux | grep -v grep | grep "$pid")
 
 		if [ "$output" != "" ]
 		then
@@ -37,7 +37,7 @@ case "$1" in
 			echo "media-berry-server is already running"
 		else
 			echo "Starting media-berry-server ..."
-			/usr/bin/python /opt/media-berry/server/server.py & echo $! > "$pidFile"
+			/usr/bin/python "$mediaBerryServerHome/server.py" & echo $! > "$pidFile"
 		fi
 	;;
 	stop)
