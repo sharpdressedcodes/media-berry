@@ -88,9 +88,14 @@ while True:
 
                 # If url is correct -> open with video player
                 if url.startswith("http"):
+			print "Opening url '" + url + "' ..."
                         process = subprocess.Popen([VIDEO_PLAYER_PATH, url],stdin=subprocess.PIPE)
+
                 if url.startswith("control-"):
                         try:
-                                process.communicate(url.split("control-")[1])
+				if process.poll is None:
+					key = url.split("control-")[1]
+					print "Routing key '" + key + "' ..."
+                                	process.communicate(key)
                         except:
-                                print "Invalid command: "+url
+                                print "Invalid command: " + url
