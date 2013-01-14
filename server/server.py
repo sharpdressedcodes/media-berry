@@ -3,13 +3,12 @@
 # Example URL for testing:
 # http://localhost:29876/http%3A%2F%2Fwww.kaba.de%2Fbekannter-versender%2Fmedia%2F497816%2Fv9%2FMP4VideoFile%2Ffilm-1-3-final.mp4
 
+import subprocess, os, time, logging
 from socket import *
-import subprocess
-import os
-import logging
 from BaseHTTPServer import BaseHTTPRequestHandler
 from StringIO import StringIO
 from urllib import unquote
+from threading import Thread
 
 # Server configuration
 SERVER_HOST = "127.0.0.1"    
@@ -17,11 +16,15 @@ SERVER_PORT = 29876
 SERVER_ADDRESS = (SERVER_HOST,SERVER_PORT)    
 BUFFER_SIZE = 4096    
 MAX_CONNECTIONS = 10
-VIDEO_PLAYER_PATH = "/usr/bin/omxplayer"
+
+# Variable definition
+process = None;
+scriptDirPath = os.path.dirname(os.path.realpath(__file__))
+videoPlayerPath = scriptDirPath + "/omxplayer.sh"
+controlFilePath = scriptDirPath + "/server.ctl"
+logFilePath = scriptDirPath + "/server.log"
 
 # Logging configuration
-scriptFilePath = os.path.abspath(__file__)
-logFilePath = scriptFilePath + ".log"
 logging.basicConfig(filename=logFilePath, level=logging.INFO)
 
 # Class for parsing an http request
@@ -57,7 +60,23 @@ def readTextFromSocket(sck):
 		text += line
 
 		return text
- 
+
+# Function to wait for until a process has started
+def waitForProcess(process):
+
+        while process != None and process.poll() != None:
+            time.sleep(0.1)
+
+        return process
+
+# Function to check if a process is running
+def isProcessRunning(process):
+
+	if process != None and process.poll() != None:
+		return False
+        else:
+		return True
+
 # Now we create a new socket object
 serv = socket( AF_INET,SOCK_STREAM)      
  
@@ -68,7 +87,7 @@ serv.bind((SERVER_ADDRESS))
 serv.listen(MAX_CONNECTIONS)
 
 # Logging
-logging.info("Start listening for video urls ...")
+logging.info("Start listening for video urls on host '" + str(SERVER_HOST) + "' and port '" + str(SERVER_PORT) + "' ...")
 
 while True:
 	
@@ -101,15 +120,43 @@ while True:
 
 			# If url is correct -> open with video player
 	                if url.startswith("http"):
-        	                logging.info("Opening url '" + url + "' ...")
-                	        process = subprocess.Popen([VIDEO_PLAYER_PATH, url],stdin=subprocess.PIPE)
+
+        	                logging.info("Opening url '" + url + "' in omxplayer ...")
+
+				# Create control file for omxplayer
+                                if os.path.exists(controlFilePath):
+                                        os.system("rm " + controlFilePath)
+                                os.system("mkfifo " + controlFilePath)
+
+				# Open omxplayer 
+				process = subprocess.Popen([videoPlayerPath, url, controlFilePath], \
+					shell=False, \
+					stderr=subprocess.PIPE, \
+					stdout=subprocess.PIPE, \
+					stdin=subprocess.PIPE)
+
+				# Wait for omxplayer 
+				waitForProcess(process)
+
+				# Start video in omxplayer
+				os.system("echo . > " + controlFilePath)
 
 		elif action == "control":
 
-			key = pathArray[2]
+			key = pathArray[2].lower()
 
 			try:
-       	                        logging.info("Executing key '" + key + "' ...")
-               	                process.communicate(key)
+				if isProcessRunning(process):
+
+					logging.info("Sending key '" + key + "' to omxplayer ...")
+
+					# Piping key to control file
+					os.system("echo -n " + key + " > " + controlFilePath)
+
+					# q -> Quit omx player
+        				if key == "q":
+						logging.info("Stopping omxplayer ...")
+						waitForProcess(process)
+				                os.system("rm " + controlFilePath)
                         except:
-       	                        logging.error("Video player is not running")
+       	                        logging.error("An error occured while sending a key to omxplayer")
