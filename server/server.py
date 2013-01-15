@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
 # Example URL for testing:
-# http://localhost:29876/http%3A%2F%2Fwww.kaba.de%2Fbekannter-versender%2Fmedia%2F497816%2Fv9%2FMP4VideoFile%2Ffilm-1-3-final.mp4
+# http://localhost:29876/play/http%3A%2F%2Fwww.kaba.de%2Fbekannter-versender%2Fmedia%2F497816%2Fv9%2FMP4VideoFile%2Ffilm-1-3-final.mp4
 
-import subprocess, os, time, logging
+import struct, subprocess, os, time, logging
 from socket import *
 from BaseHTTPServer import BaseHTTPRequestHandler
 from StringIO import StringIO
 from urllib import unquote
-from threading import Thread
 
 # Server configuration
 SERVER_HOST = "127.0.0.1"    
@@ -77,6 +76,30 @@ def isProcessRunning(process):
         else:
 		return True
 
+# Function to get the key code for a key
+def getKeyCode(key):
+	
+	format = ">L"		
+	keyCode = None
+
+	# Cursor left
+	if key == "%":
+		keyCode = struct.pack(format, 0x5b44);
+	# Cursor right
+	if key == "'":
+		keyCode = struct.pack(format, 0x5b43);
+	# Cursor up
+	if key == "&":
+		keyCode = struct.pack(format, 0x5b41);
+	# Cursor down
+	if key == "(":
+		keyCode = struct.pack(format, 0x5b42);
+
+	if keyCode == None:
+		keyCode = key
+
+	return keyCode
+
 # Now we create a new socket object
 serv = socket( AF_INET,SOCK_STREAM)      
  
@@ -143,20 +166,21 @@ while True:
 
 		elif action == "control":
 
-			key = pathArray[2].lower()
-
 			try:
 				if isProcessRunning(process):
 
-					logging.info("Sending key '" + key + "' to omxplayer ...")
+					key = pathArray[2].lower()
+					keyCode = getKeyCode(key)
 
-					# Piping key to control file
-					os.system("echo -n " + key + " > " + controlFilePath)
+					logging.info("Sending key code '" + keyCode + "' to omxplayer ...")
+
+					# Piping key code to control file
+					os.system("echo -n " + keyCode + " > " + controlFilePath)
 
 					# q -> Quit omx player
-        				if key == "q":
+        				if keyCode == "q":
 						logging.info("Stopping omxplayer ...")
 						waitForProcess(process)
 				                os.system("rm " + controlFilePath)
                         except:
-       	                        logging.error("An error occured while sending a key to omxplayer")
+       	                        logging.error("An error occured while sending a key code to omxplayer")
