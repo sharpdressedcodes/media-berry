@@ -15,16 +15,13 @@ SERVER_PORT = 29876
 SERVER_ADDRESS = (SERVER_HOST,SERVER_PORT)    
 BUFFER_SIZE = 4096    
 MAX_CONNECTIONS = 10
-
-# Variable definition
-process = None;
-scriptDirPath = os.path.dirname(os.path.realpath(__file__))
-videoPlayerPath = scriptDirPath + "/omxplayer.sh"
-controlFilePath = scriptDirPath + "/server.ctl"
-logFilePath = scriptDirPath + "/server.log"
+SCRIPT_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+VIDEO_PLAYER_PATH = SCRIPT_DIR_PATH + "/omxplayer.sh"
+CONTROL_FILE_PATH = SCRIPT_DIR_PATH + "/server.ctl"
+LOG_FILE_PATH = SCRIPT_DIR_PATH + "/server.log"
 
 # Logging configuration
-logging.basicConfig(filename=logFilePath, level=logging.INFO)
+logging.basicConfig(filename=LOG_FILE_PATH, level=logging.INFO)
 
 # Class for parsing an http request
 class HTTPRequest(BaseHTTPRequestHandler):
@@ -112,6 +109,9 @@ serv.listen(MAX_CONNECTIONS)
 # Logging
 logging.info("Start listening for video urls on host '" + str(SERVER_HOST) + "' and port '" + str(SERVER_PORT) + "' ...")
 
+# Variable for process instance
+process = None
+
 while True:
 	
 	# Accept the connection	
@@ -147,12 +147,12 @@ while True:
 				logging.info("Opening url '" + url + "' in omxplayer ...")
 
 				# Create control file for omxplayer
-				if os.path.exists(controlFilePath):
-					os.system("rm " + controlFilePath)
-				os.system("mkfifo " + controlFilePath)
+				if os.path.exists(CONTROL_FILE_PATH):
+					os.system("rm " + CONTROL_FILE_PATH)
+				os.system("mkfifo " + CONTROL_FILE_PATH)
 
 				# Open omxplayer 
-				process = subprocess.Popen([videoPlayerPath, url, controlFilePath], \
+				process = subprocess.Popen([VIDEO_PLAYER_PATH, url, CONTROL_FILE_PATH], \
 					shell=False, \
 					stderr=subprocess.PIPE, \
 					stdout=subprocess.PIPE, \
@@ -162,7 +162,7 @@ while True:
 				waitForProcess(process)
 
 				# Start video in omxplayer
-				os.system("echo . > " + controlFilePath)
+				os.system("echo . > " + CONTROL_FILE_PATH)
 
 		elif action == "control":
 
@@ -175,12 +175,12 @@ while True:
 					logging.info("Sending key code '" + keyCode + "' to omxplayer ...")
 
 					# Piping key code to control file
-					os.system("echo -n " + keyCode + " > " + controlFilePath)
+					os.system("echo -n " + keyCode + " > " + CONTROL_FILE_PATH)
 
 					# q -> Quit omx player
 					if keyCode == "q":
 						logging.info("Stopping omxplayer ...")
 						waitForProcess(process)
-						os.system("rm " + controlFilePath)
+						os.system("rm " + CONTROL_FILE_PATH)
 			except:
 				logging.error("An error occured while sending a key code to omxplayer")
