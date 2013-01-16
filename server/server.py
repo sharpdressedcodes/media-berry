@@ -1,8 +1,5 @@
 #!/usr/bin/python
 
-# Example URL for testing:
-# http://localhost:29876/play/http%3A%2F%2Fwww.kaba.de%2Fbekannter-versender%2Fmedia%2F497816%2Fv9%2FMP4VideoFile%2Ffilm-1-3-final.mp4
-
 import struct, subprocess, os, time, logging
 from socket import *
 from BaseHTTPServer import BaseHTTPRequestHandler
