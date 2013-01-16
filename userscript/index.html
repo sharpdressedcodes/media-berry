@@ -1,15 +1,6 @@
 <html>
 <head>
     <title>Media Berry</title>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $("<div id='tmp' style='display: none' />").appendTo('body');
-            $("#watch").click(function () {
-                $('<iframe />').attr('src', 'http://localhost:29876/play/http%3A%2F%2Fwww.w3schools.com%2Fhtml%2Fmovie.mp4').appendTo("#tmp");
-            });
-        });
-    </script>
 </head>
 <body>
 <div>
@@ -30,9 +21,38 @@
         Please make sure the server is running on http://localhost:29876
     </p>
 
+    <h2>OMX Player Keyboard Controls</h2>
+
+    <pre>
+
+1 Increase Speed
+2 Decrease Speed
+j Previous Audio stream
+k Next Audio stream
+i Previous Chapter
+o Next Chapter
+n Previous Subtitle stream
+m Next Subtitle stream
+s Toggle subtitles
+q Exit OMXPlayer
+Space or p Pause/Resume
+- Decrease Volume
++ Increase Volume
+Left Seek -30
+Right Seek +30
+Down Seek -600
+Up Seek +600
+
+    </pre>	
+
     <h2>Play Video Sample</h2>
 
-    <img id="watch" style="cursor: pointer;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAADNQTFRFBAcHwMHBFBcX7+/voaKiQ0VFIyYm4ODggYODYmRk0NDQU1VVsLGxkZKSMzY2cnR0////l9YmXAAAABF0Uk5T/////////////////////wAlrZliAAAC7klEQVR42uyayW4sIQxFzTzUlP//2tcvUhaRuuDamGpFwote4tM2UNi+9PVhowWwABbAAlgAC2ABLIA/CpD2vAVLPxZC9vUxAOdLpDdmtyPNB3A+UMNONgMPIBVLPdvMNAATCLLTTwFIoPvvTWnUAVwmlm1OF8BEYpo9NAEuEhgWBATAnSSyWHUAqiWhWa8BsIv9v8yPA3gasjIKMOi/T9AB2GnYjhGAascBOvugCeA0/BNVMcCp4p+sEwJcpGRBBmBIzQ4JgIt6AJQEAJei/0YSbgESqZpnAwRdgMgFMETPhICeCcB9CG4AanOxy+qF4AagNNcy7lILwXsA117r9eiu/BwZBoAHlvLcPBQGwIn8F26pYHGABAYz8fKwwwAezuYeR3PwFmDDtxMnDxEGsJz9zMhDAgES80DBedhBgJ17otE8ZBAg868ULA8BBAiSOw0p4ONMgFfg+lcjCCC81b/SJjgGmgD9PJjZAL08YABpBKCdBwzADAE08/AMgCuDAHUM4LAf3YTm/OgpcOWzx/Do3YUVAzhlAObUuopF34Je9O+epSQpzI0g+pzPsWcDgM30CwSoTID+V7BRHr59lPIAMlwiVRQgMAAYowwLP8sPGACO/vcEAwaoKEBmFageL06xhw13kORwgAwAJG6HYGOU56kLwK3Nb3s0JOlRGV5V3GoP3AG0qzMv6aFlXptOs1Hc7NnTrFkRGID7Vm18JgD3AOaZADTa9arN2uj4AMkqAhjJyObQ819kQ6swPwFtAKeVhCqdG1Yd/14+uvWTN0B/eJ1n+++O78uo/9MNChjKXP+AhGNogFm6ShpAxOKn5R+V8Rg74/xxhExJJCSAZESolEtwHEE1GSpm447p4q4u5+OM6WxGxXQcQaODC7Hi8FVZkk53RNV/zwb4XzB0bsbNMxfky3rdXm7iYDfv2MvJhM3VX+H3hgjlkCmbR6Td1Rjjj9ePGVhkidsXwAJYAAtgASyABbAAPg7wT4ABAEYSjudgB/2SAAAAAElFTkSuQmCC">
+<video width="320" height="240" controls>
+  <source src="http://www.w3schools.com/html/movie.mp4" type="video/mp4">
+  <source src="http://www.w3schools.com/html/movie.ogg" type="video/ogg">
+  Your browser does not support the video tag.
+</video>
+
 </div>
 </body>
 </html>
