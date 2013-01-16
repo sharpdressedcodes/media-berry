@@ -182,5 +182,6 @@ while True:
 						logging.info("Stopping omxplayer ...")
 						waitForProcess(process)
 						os.system("rm " + CONTROL_FILE_PATH)
-			except:
-				logging.error("An error occured while sending a key code to omxplayer")
+						
+			except Exception, e:
+				logging.error("An error occured while sending a key code to omxplayer: " + str(e))
