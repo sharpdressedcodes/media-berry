@@ -34,8 +34,8 @@ class HTTPRequest(BaseHTTPRequestHandler):
 		self.raw_requestline = self.rfile.readline()
 		self.error_code = self.error_message = None
 		self.parse_request()
-
-    	def send_error(self, code, message):
+		
+	def send_error(self, code, message):
 		self.error_code = code
 		self.error_message = message
 
@@ -62,38 +62,38 @@ def readTextFromSocket(sck):
 
 # Function to wait for until a process has started
 def waitForProcess(process):
-
-        while process != None and process.poll() != None:
-            time.sleep(0.1)
-
-        return process
+	
+	while process != None and process.poll() != None:
+		time.sleep(0.1)
+		
+	return process
 
 # Function to check if a process is running
 def isProcessRunning(process):
 
 	if process != None and process.poll() != None:
 		return False
-        else:
+	else:
 		return True
 
 # Function to get the key code for a key
 def getKeyCode(key):
 	
-	format = ">L"		
+	formatString = ">L"		
 	keyCode = None
 
 	# Cursor left
 	if key == "%":
-		keyCode = struct.pack(format, 0x5b44);
+		keyCode = struct.pack(formatString, 0x5b44);
 	# Cursor right
 	if key == "'":
-		keyCode = struct.pack(format, 0x5b43);
+		keyCode = struct.pack(formatString, 0x5b43);
 	# Cursor up
 	if key == "&":
-		keyCode = struct.pack(format, 0x5b41);
+		keyCode = struct.pack(formatString, 0x5b41);
 	# Cursor down
 	if key == "(":
-		keyCode = struct.pack(format, 0x5b42);
+		keyCode = struct.pack(formatString, 0x5b42);
 
 	if keyCode == None:
 		keyCode = key
@@ -102,7 +102,7 @@ def getKeyCode(key):
 
 # Now we create a new socket object
 serv = socket( AF_INET,SOCK_STREAM)      
- 
+
 # Bind our socket to the server address
 serv.bind((SERVER_ADDRESS)) 
 
@@ -128,9 +128,9 @@ while True:
 
 	# close the client connection
 	conn.close()
-
-        # Is a path submitted in the request?
-        if hasattr(request, "path"):
+	
+	# Is a path submitted in the request?
+	if hasattr(request, "path"):
 
 		# Parse information from request
 		pathArray = request.path.split("/")
@@ -142,14 +142,14 @@ while True:
 			url = unquote(pathArray[2])							
 
 			# If url is correct -> open with video player
-	                if url.startswith("http"):
-
-        	                logging.info("Opening url '" + url + "' in omxplayer ...")
+			if url.startswith("http"):
+				
+				logging.info("Opening url '" + url + "' in omxplayer ...")
 
 				# Create control file for omxplayer
-                                if os.path.exists(controlFilePath):
-                                        os.system("rm " + controlFilePath)
-                                os.system("mkfifo " + controlFilePath)
+				if os.path.exists(controlFilePath):
+					os.system("rm " + controlFilePath)
+				os.system("mkfifo " + controlFilePath)
 
 				# Open omxplayer 
 				process = subprocess.Popen([videoPlayerPath, url, controlFilePath], \
@@ -178,9 +178,9 @@ while True:
 					os.system("echo -n " + keyCode + " > " + controlFilePath)
 
 					# q -> Quit omx player
-        				if keyCode == "q":
+					if keyCode == "q":
 						logging.info("Stopping omxplayer ...")
 						waitForProcess(process)
-				                os.system("rm " + controlFilePath)
-                        except:
-       	                        logging.error("An error occured while sending a key code to omxplayer")
+						os.system("rm " + controlFilePath)
+			except:
+				logging.error("An error occured while sending a key code to omxplayer")
