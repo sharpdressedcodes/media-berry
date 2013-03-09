@@ -160,7 +160,35 @@ while True:
 
 				# Start video in omxplayer
 				os.system("echo . > " + CONTROL_FILE_PATH)
+		# Play video 
+		elif action == "youtube":
 
+			url = unquote(pathArray[2])							
+
+			# If url is correct -> open with video player
+			if url.startswith("http"):
+				
+				logging.info("Opening youtube video url '" + url + "' in omxplayer ...")
+
+				# Create control file for omxplayer
+				if os.path.exists(CONTROL_FILE_PATH):
+					os.system("rm " + CONTROL_FILE_PATH)
+				os.system("mkfifo " + CONTROL_FILE_PATH)
+
+				# Open omxplayer 
+				process = subprocess.Popen([VIDEO_PLAYER_PATH, "${youtube-dl -g "+url+"}", CONTROL_FILE_PATH], \
+					shell=False, \
+					stderr=subprocess.PIPE, \
+					stdout=subprocess.PIPE, \
+					stdin=subprocess.PIPE)
+
+				# Wait for omxplayer 
+				waitForProcess(process)
+
+				# Start video in omxplayer
+				os.system("echo . > " + CONTROL_FILE_PATH)
+
+				
 		elif action == "control":
 
 			try:
