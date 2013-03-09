@@ -14,6 +14,7 @@ BUFFER_SIZE = 4096
 MAX_CONNECTIONS = 10
 SCRIPT_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 VIDEO_PLAYER_PATH = SCRIPT_DIR_PATH + "/omxplayer.sh"
+YOUTUBE_PLAYER_PATH = SCRIPT_DIR_PATH + "/omxplayer-youtube.sh"
 CONTROL_FILE_PATH = SCRIPT_DIR_PATH + "/server.ctl"
 LOG_FILE_PATH = SCRIPT_DIR_PATH + "/server.log"
 
@@ -176,7 +177,7 @@ while True:
 				os.system("mkfifo " + CONTROL_FILE_PATH)
 
 				# Open omxplayer 
-				process = subprocess.Popen([VIDEO_PLAYER_PATH, "${youtube-dl -g "+url+"}", CONTROL_FILE_PATH], \
+				process = subprocess.Popen([YOUTUBE_PLAYER_PATH, url, CONTROL_FILE_PATH], \
 					shell=False, \
 					stderr=subprocess.PIPE, \
 					stdout=subprocess.PIPE, \
