@@ -4,7 +4,7 @@
 // @namespace       media-berry
 // @description     Replaces HTML5 to local link starting native player
 // @include         *
-// @version         0.5
+// @version         0.6
 // ==/UserScript==
 
 // a function that loads jQuery and calls a callback function when jQuery has finished loading
@@ -39,6 +39,9 @@ function main() {
 					if (src) {					
 						jQ(this).replaceWith(button);
 					}
+					if(jQ(this).attr("autoplay")){
+						startVideoCmd("play",jQ(this).attr("alt"));
+					}
 				});				
 		}
 	   
@@ -53,16 +56,20 @@ function main() {
 		jQ("<div id='watch-media-berry-tmp' style='display: none' />").appendTo('body');
 	 
 		jQ(".watch-media-berry").click(function () {
-	        jQ('<iframe />').attr('src', ' http://localhost:29876/play/' + encodeURIComponent(jQ(this).attr("alt"))).appendTo("#watch-media-berry-tmp");
-	    });
+			startVideoCmd("play",jQ(this).attr("alt"));	        
+		});
 		
 		jQ(".watch-media-berry-youtube").click(function () {
-	        jQ('<iframe />').attr('src', ' http://localhost:29876/youtube/' + encodeURIComponent(jQ(this).attr("alt"))).appendTo("#watch-media-berry-tmp");
-	    });
+	        startVideoCmd("youtube",jQ(this).attr("alt"));
+		});
 	
 	    jQ('body').keydown(function(e) {
 	        jQ('<iframe />').attr('src', ' http://localhost:29876/control/' + String.fromCharCode(e.keyCode)).appendTo("#watch-media-berry-tmp");
 	    });
+		
+		function startVideoCmd(key, url){
+		jQ('<iframe />').attr('src', ' http://localhost:29876/'+ key +'/' + encodeURIComponent(url)).appendTo("#watch-media-berry-tmp");
+		}
 	
 	    // Dirty to do this here but JQuery seems to do this in further versions
 	    function convertToAbsolute(link) {
