@@ -40,7 +40,7 @@ function main() {
 						jQ(this).replaceWith(button);
 					}
 					if(jQ(this).attr("autoplay")){
-						startVideoCmd("play",jQ(this).attr("alt"));
+						startVideoCmd("play",src);
 					}
 				});				
 		}
