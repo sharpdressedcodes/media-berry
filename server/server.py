@@ -13,7 +13,6 @@ SERVER_ADDRESS = (SERVER_HOST,SERVER_PORT)
 BUFFER_SIZE = 4096    
 MAX_CONNECTIONS = 10
 SCRIPT_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-VIDEO_PLAYER_PATH = SCRIPT_DIR_PATH + "/usr/bin/omxgtk"
 LOG_FILE_PATH = SCRIPT_DIR_PATH + "/server.log"
 
 # Logging configuration
@@ -96,4 +95,4 @@ while True:
 
 			# If url is correct -> open with video player
 			if url.startswith("http"):
-				subprocess.Popen([VIDEO_PLAYER_PATH, url])
+				subprocess.Popen(["/usr/bin/omxgtk","--windows", url])
