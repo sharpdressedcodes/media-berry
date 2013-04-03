@@ -13,6 +13,9 @@ SERVER_ADDRESS = (SERVER_HOST,SERVER_PORT)
 BUFFER_SIZE = 4096    
 MAX_CONNECTIONS = 10
 SCRIPT_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+VIDEO_PLAYER_PATH = SCRIPT_DIR_PATH + "/omxplayer.sh"
+YOUTUBE_PLAYER_PATH = SCRIPT_DIR_PATH + "/omxplayer-youtube.sh"
+CONTROL_FILE_PATH = SCRIPT_DIR_PATH + "/server.ctl"
 LOG_FILE_PATH = SCRIPT_DIR_PATH + "/server.log"
 
 # Logging configuration
@@ -52,6 +55,46 @@ def readTextFromSocket(sck):
 
 		return text
 
+# Function to wait for until a process has started
+def waitForProcess(process):
+	
+	while process != None and process.poll() != None:
+		time.sleep(0.1)
+		
+	return process
+
+# Function to check if a process is running
+def isProcessRunning(process):
+
+	if process != None and process.poll() != None:
+		return False
+	else:
+		return True
+
+# Function to get the key code for a key
+def getKeyCode(key):
+	
+	formatString = ">L"		
+	keyCode = None
+
+	# Cursor left
+	if key == "%":
+		keyCode = struct.pack(formatString, 0x5b44);
+	# Cursor right
+	if key == "'":
+		keyCode = struct.pack(formatString, 0x5b43);
+	# Cursor up
+	if key == "&":
+		keyCode = struct.pack(formatString, 0x5b41);
+	# Cursor down
+	if key == "(":
+		keyCode = struct.pack(formatString, 0x5b42);
+
+	if keyCode == None:
+		keyCode = key
+
+	return keyCode
+
 # Now we create a new socket object
 serv = socket( AF_INET,SOCK_STREAM)      
 
@@ -63,6 +106,9 @@ serv.listen(MAX_CONNECTIONS)
 
 # Logging
 logging.info("Start listening for video urls on host '" + str(SERVER_HOST) + "' and port '" + str(SERVER_PORT) + "' ...")
+
+# Variable for process instance
+process = None
 
 while True:
 	
@@ -80,19 +126,88 @@ while True:
 
 	# close the client connection
 	conn.close()
-
+	
 	# Is a path submitted in the request?
 	if hasattr(request, "path"):
 
 		# Parse information from request
 		pathArray = request.path.split("/")
 		action = pathArray[1]
-
-		# Play video
+		
+		# Play video 
 		if action == "play":
 
-			url = unquote(pathArray[2])
+			url = unquote(pathArray[2])							
 
 			# If url is correct -> open with video player
 			if url.startswith("http"):
-				subprocess.Popen(["/usr/bin/omxgtk","--windows", url])
+				
+				logging.info("Opening url '" + url + "' in omxplayer ...")
+
+				# Create control file for omxplayer
+				if os.path.exists(CONTROL_FILE_PATH):
+					os.system("rm " + CONTROL_FILE_PATH)
+				os.system("mkfifo " + CONTROL_FILE_PATH)
+
+				# Open omxplayer 
+				process = subprocess.Popen([VIDEO_PLAYER_PATH, url, CONTROL_FILE_PATH], \
+					shell=False, \
+					stderr=subprocess.PIPE, \
+					stdout=subprocess.PIPE, \
+					stdin=subprocess.PIPE)
+
+				# Wait for omxplayer 
+				waitForProcess(process)
+
+				# Start video in omxplayer
+				os.system("echo . > " + CONTROL_FILE_PATH)
+		# Play video 
+		elif action == "youtube":
+
+			url = unquote(pathArray[2])							
+
+			# If url is correct -> open with video player
+			if url.startswith("http"):
+				
+				logging.info("Opening youtube video url '" + url + "' in omxplayer ...")
+
+				# Create control file for omxplayer
+				if os.path.exists(CONTROL_FILE_PATH):
+					os.system("rm " + CONTROL_FILE_PATH)
+				os.system("mkfifo " + CONTROL_FILE_PATH)
+
+				# Open omxplayer 
+				process = subprocess.Popen([YOUTUBE_PLAYER_PATH, url, CONTROL_FILE_PATH], \
+					shell=False, \
+					stderr=subprocess.PIPE, \
+					stdout=subprocess.PIPE, \
+					stdin=subprocess.PIPE)
+
+				# Wait for omxplayer 
+				waitForProcess(process)
+
+				# Start video in omxplayer
+				os.system("echo . > " + CONTROL_FILE_PATH)
+
+				
+		elif action == "control":
+
+			try:
+				if isProcessRunning(process):
+
+					key = pathArray[2].lower()
+					keyCode = getKeyCode(key)
+
+					logging.info("Sending key code '" + keyCode + "' to omxplayer ...")
+
+					# Piping key code to control file
+					os.system("echo -n " + keyCode + " > " + CONTROL_FILE_PATH)
+
+					# q -> Quit omx player
+					if keyCode == "q":
+						logging.info("Stopping omxplayer ...")
+						waitForProcess(process)
+						os.system("rm " + CONTROL_FILE_PATH)
+						
+			except Exception, e:
+				logging.error("An error occured while sending a key code to omxplayer: " + str(e))
