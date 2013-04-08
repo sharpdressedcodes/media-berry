@@ -36,7 +36,7 @@ function main() {
 					 // we use the first source tag - maybe we should use mp4
 					var src = jQ(this).children("source:first").attr("src");					
 					src = convertToAbsolute(src);
-					var button = '<div style="border: 8px solid #969696; width: 230px; height: 132px; background: #E0E0E0; background: #E0E0E0; border-radius:5px; text-align:center; " class="media-berry-video"><img class="watch-media-berry" alt="' + src + '" style="cursor: pointer;" src="'+ playbuttonimage +'"></div>';
+					var button = '<div style="border: 8px solid #969696; width: 230px; height: 132px; background: #E0E0E0; background: #E0E0E0; border-radius:5px; text-align:center; " class="media-berry-video"><img class="watch-media-berry" alt="' + src + '" style="cursor: pointer;" src="'+ playbuttonimage +'"><div style="margin-top: 8px"><span>HDMI sound</span><input name="hdmi" type="checkbox" /><span>Fullscreen</span><input type="checkbox" name="screen" /></div></div>';
 					
 					if (src) {					
 						jQ(this).replaceWith(button);
