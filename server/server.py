@@ -52,6 +52,21 @@ def readTextFromSocket(sck):
         text += line
         return text
 
+# Function to wait for until a process has started
+def waitForProcess(process):
+
+	while process != None and process.poll() != None:
+		time.sleep(0.1)
+
+	return process
+
+# Function to check if a process is running
+def isProcessRunning(process):
+
+	if process != None and process.poll() != None:
+		return False
+	else:
+		return True
 
 class Serverhttp:
     def __init__(self):
@@ -101,7 +116,7 @@ class Serverhttp:
                 if action == "play":
                     part = urlparse(request.path)
                     url = unquote(part.path.split("/")[2])
-                    processList = [SCRIPT_DIR_PATH + "/player.sh"]
+                    processList = ["/usr/bin/omxgtk"]
 
                     # we get all parameter out of the url
                     params = part.query.split("&")
@@ -114,7 +129,9 @@ class Serverhttp:
                                 #processList.append("--windows")
                         if param.split("=")[0] == "youtube":
                             if param.split("=")[1] == "true":
-                                processList.append("$(youtube-dl -g " + url + ")")
+                                youtubeProcess = subprocess.Popen(["youtube-dl","-g",url],stdout=subprocess.PIPE)
+                                waitForProcess(youtubeProcess)
+                                processList.append(youtubeProcess.communicate()[0])
                             else:
                                 processList.append(url)
 
