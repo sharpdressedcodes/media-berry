@@ -51,7 +51,7 @@ function main() {
                 src = jQ(location).attr('href');
             }
 
-            var button = '<div style="margin: auto; margin-bottom: 20px;border: 8px solid #969696; width: 230px; height: 132px; background: #E0E0E0; background: #E0E0E0; border-radius:5px; text-align:center; " class="media-berry-video"><img class="watch-media-berry" alt="' + src + '" style="cursor: pointer;" src="' + playbuttonimage + '"><div class="video-options" style="margin-top: 8px"><span>HDMI sound</span><input class="hdmi" type="checkbox" />&nbsp;<span>Fullscreen</span><input type="checkbox" class="screen" /></div></div>';
+            var button = '<div style="width: 250px; margin: auto"><div style="margin-bottom: 5px;border: 8px solid #969696; width: 100%; height: 132px; background: #E0E0E0; border-radius:5px; text-align:center; " class="media-berry-video"><img class="watch-media-berry" alt="' + src + '" style="cursor: pointer;" src="' + playbuttonimage + '"></div><div style="color: black; font-size: 12px; position: absolute; margin-top: -35px; padding-left: 10px;" class="video-options"><span>HDMI sound</span><input class="hdmi" type="checkbox" />&nbsp;&nbsp;<span>Full screen (no controls)</span><input type="checkbox" class="screen" /></div></div>';
 
             if (src) {
                 jQ(this).replaceWith(button);
@@ -63,11 +63,11 @@ function main() {
 
     jQ(".watch-media-berry").click(function () {
         var hdmi = false;
-        if (jQ(this).parent().children('.video-options').first().children('.hdmi').first().attr('checked') == "checked") {
+        if (jQ(this).parent().parent().children('.video-options').first().children('.hdmi').first().attr('checked') == "checked") {
             hdmi = true;
         }
         var screen = "window"
-        if (jQ(this).parent().children('.video-options').first().children('.screen').first().attr('checked') == "checked") {
+        if (jQ(this).parent().parent().children('.video-options').first().children('.screen').first().attr('checked') == "checked") {
             screen = "fullscreen";
         }
         startVideoCmd("play", encodeURIComponent(jQ(this).attr("alt")) + "?hdmi=" + hdmi + "&screen=" + screen + "&youtube=" + isYoutube());
