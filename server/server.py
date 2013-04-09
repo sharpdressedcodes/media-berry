@@ -131,7 +131,8 @@ class Serverhttp:
                             if param.split("=")[1] == "true":
                                 youtubeProcess = subprocess.Popen(["youtube-dl","-g",url],stdout=subprocess.PIPE)
                                 waitForProcess(youtubeProcess)
-                                processList.append(youtubeProcess.communicate()[0])
+                                youtubeUrl = youtubeProcess.communicate()[0]
+                                processList.append(youtubeUrl.rstrip(youtubeUrl[-2:]))
                             else:
                                 processList.append(url)
 
