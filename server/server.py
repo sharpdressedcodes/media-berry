@@ -101,17 +101,17 @@ class Serverhttp:
                 if action == "play":
                     part = urlparse(request.path)
                     url = unquote(part.path.split("/")[2])
-                    processList = ["/usr/bin/omxgtk"]
+                    processList = [SCRIPT_DIR_PATH + "/player.sh"]
 
                     # we get all parameter out of the url
                     params = part.query.split("&")
                     for param in params:
-                        if param.split("=")[0] == "hdmi":
-                            if param.split("=")[1] == "true":
-                                processList.append("-o hdmi")
-                        if param.split("=")[0] == "screen":
-                            if not param.split("=")[1] == "fullscreen":
-                                processList.append("--windows")
+                        #if param.split("=")[0] == "hdmi":
+                            #if param.split("=")[1] == "true":
+                                #processList.append("-o hdmi")
+                        #if param.split("=")[0] == "screen":
+                            #if not param.split("=")[1] == "fullscreen":
+                                #processList.append("--windows")
                         if param.split("=")[0] == "youtube":
                             if param.split("=")[1] == "true":
                                 processList.append("$(youtube-dl -g " + url + ")")
