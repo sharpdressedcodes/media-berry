@@ -138,7 +138,7 @@ class Serverhttp:
 
 
 def playMovie(hdmi, screen, url):
-    MOVIEPLAYER = ["/usr/bin/omxgtk", "usr/bin/omxplayer", "/usr/bin/vlc"]
+    MOVIEPLAYER = ["/usr/bin/omxgtk", "/usr/bin/omxplayer", "/usr/bin/vlc"]
     for player in MOVIEPLAYER:
         if os.path.isfile(player):
             if player == "usr/bin/omxplayer":
@@ -150,6 +150,6 @@ def playMovie(hdmi, screen, url):
             command = player + " " + hdmi + screen + url
             logging.info("play video: [" + command + "]")
             os.system(command)
-            pass
+            return
 pass
 server = Serverhttp()
