@@ -14,15 +14,15 @@ LOG_FILE_PATH = SCRIPT_DIR_PATH + "/server.log"
 # Logging configuration
 logging.basicConfig(filename=LOG_FILE_PATH, level=logging.INFO)
 
-# Logger to console TODO disable it in stable
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
+# Logger to console
+#console = logging.StreamHandler()
+#console.setLevel(logging.INFO)
 # set a format which is simpler for console use
-formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+#formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
 # tell the handler to use this format
-console.setFormatter(formatter)
+#console.setFormatter(formatter)
 # add the handler to the root logger
-logging.getLogger('').addHandler(console)
+#logging.getLogger('').addHandler(console)
 
 # Class for parsing an http request
 class HTTPRequest(BaseHTTPRequestHandler):
@@ -54,19 +54,18 @@ def readTextFromSocket(sck):
 
 # Function to wait for until a process has started
 def waitForProcess(process):
+    while process != None and process.poll() != None:
+        time.sleep(0.1)
 
-	while process != None and process.poll() != None:
-		time.sleep(0.1)
-
-	return process
+    return process
 
 # Function to check if a process is running
 def isProcessRunning(process):
+    if process != None and process.poll() != None:
+        return False
+    else:
+        return True
 
-	if process != None and process.poll() != None:
-		return False
-	else:
-		return True
 
 class Serverhttp:
     def __init__(self):
@@ -93,6 +92,8 @@ class Serverhttp:
         except Exception as e:
             time.sleep(2)
             logging.info(e)
+            # TODO Port befreien
+
             self.__init__()
 
         while True:
@@ -116,35 +117,39 @@ class Serverhttp:
                 if action == "play":
                     part = urlparse(request.path)
                     url = unquote(part.path.split("/")[2])
-                    processList = ["/usr/bin/omxgtk"]
 
                     # we get all parameter out of the url
                     params = part.query.split("&")
+                    hdmi = ""
+                    screen = ""
+
                     for param in params:
-                        #if param.split("=")[0] == "hdmi":
-                            #if param.split("=")[1] == "true":
-                                #processList.append("-o hdmi")
-                        #if param.split("=")[0] == "screen":
-                            #if not param.split("=")[1] == "fullscreen":
-                                #processList.append("--windows")
+                        if param.split("=")[0] == "hdmi":
+                            if param.split("=")[1] == "true":
+                                hdmi = ("-o hdmi ")
+                            if param.split("=")[0] == "screen":
+                                if not param.split("=")[1] == "fullscreen":
+                                    screen = "--windows "
                         if param.split("=")[0] == "youtube":
                             if param.split("=")[1] == "true":
-                                youtubeProcess = subprocess.Popen(["youtube-dl","-g",url],stdout=subprocess.PIPE)
-                                waitForProcess(youtubeProcess)
-                                youtubeUrl = youtubeProcess.communicate()[0]
-                                processList.append(youtubeUrl.rstrip(youtubeUrl[-2:]))
-                            else:
-                                processList.append(url)
+                                url = "$(youtube-dl -g " + url + ")"
 
-                    logging.info(processList)
-                    try:
-                        subprocess.Popen(processList)
-                    except:
-                        processList[0] = "/usr/bin/omxplayer"
-                        try:
-                            subprocess.Popen(processList)
-                        except:
-                            logging.info("Cannot start video [" + str(processList) + "]")
+                    playMovie(hdmi, screen, url)
 
 
+def playMovie(hdmi, screen, url):
+    MOVIEPLAYER = ["/usr/bin/omxgtk", "usr/bin/omxplayer", "/usr/bin/vlc"]
+    for player in MOVIEPLAYER:
+        if os.path.isfile(player):
+            if player == "usr/bin/omxplayer":
+                screen = ""
+            if player == "/usr/bin/vlc":
+                screen = ""
+                hdmi = ""
+
+            command = player + " " + hdmi + screen + url
+            logging.info("play video: [" + command + "]")
+            os.system(command)
+            pass
+pass
 server = Serverhttp()

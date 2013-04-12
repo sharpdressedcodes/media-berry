@@ -33,8 +33,9 @@ function main() {
 
     if (videotag.length > 0) {
         videotag.each(function (index) {
-            console.log(isHtml5(jQ(this)));
+
             if (isHtml5(jQ(this))) {
+                console.log("Found HTML5 Video")
                 // we use the first source tag - maybe we should use mp4
                 var src = jQ(this).children("source:first").attr("src");
                 src = convertToAbsolute(src);
@@ -47,14 +48,17 @@ function main() {
             }
 
             if (isYoutube()) {
+                console.log("Found Youtube Video")
                 jQ("#guide-main").hide();
                 src = jQ(location).attr('href');
             }
 
-            var button = '<div style="width: 250px; margin: auto"><div style="margin-bottom: 5px;border: 8px solid #969696; width: 100%; height: 132px; background: #E0E0E0; border-radius:5px; text-align:center; " class="media-berry-video"><img class="watch-media-berry" alt="' + src + '" style="cursor: pointer;" src="' + playbuttonimage + '"></div><div style="color: black; font-size: 12px; position: absolute; margin-top: -35px; padding-left: 10px;" class="video-options"><span>HDMI sound</span><input class="hdmi" type="checkbox" />&nbsp;&nbsp;<span>Full screen (no controls)</span><input type="checkbox" class="screen" /></div></div>';
+            var button = '<div style="width: 250px; margin: auto"><div style="margin-bottom: 5px;border: 8px solid #969696; width: 100%; height: 132px; background: #E0E0E0; border-radius:5px; text-align:center; " class="media-berry-video"><img class="watch-media-berry" alt="' + src + '" style="cursor: pointer;" src="' + playbuttonimage + '"></div><div style="color: black; font-size: 12px; position: absolute; margin-top: -35px; padding-left: 10px;" class="video-options"><span>HDMI sound</span><input class="hdmi" type="checkbox" />&nbsp;&nbsp;<span>Full screen</span><input type="checkbox" class="screen" /></div></div>';
 
             if (src) {
-                jQ(this).replaceWith(button);
+                jQ(this).hide();
+                jQ(this).after(button);
+
             }
 
         });
@@ -75,6 +79,7 @@ function main() {
 
 
     function isHtml5(tag) {
+        console.log(tag.context.tagName.toLowerCase());
         return tag.context.tagName.toLowerCase() == "video";
     }
 
@@ -89,17 +94,18 @@ function main() {
 
     // Dirty to do this here but JQuery seems to do this in further versions
     function convertToAbsolute(link) {
-        if (link.indexOf("http") == 0) {
-            return link;
-        }
-        if (link.indexOf(".") != 0) {
-            if (link.indexOf("/") == 0) {
-                link = link.substr(1, link.length);
+        if(link){
+            if (link.indexOf("http") == 0) {
+                return link;
             }
-            return getAbsolutePath() + link;
-
-
+            if (link.indexOf(".") != 0) {
+                if (link.indexOf("/") == 0) {
+                    link = link.substr(1, link.length);
+                }
+                return getAbsolutePath() + link;
+            }
         }
+        return null;
     }
 
     function getAbsolutePath() {
