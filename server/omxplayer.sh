@@ -3,4 +3,4 @@
 videoPath="$1"
 controlFilePath="$2"
 
-/usr/bin/omxplayer "$videoPath" < "$controlFilePath"
+/usr/bin/omxplayer -o local "$videoPath" < "$controlFilePath"
