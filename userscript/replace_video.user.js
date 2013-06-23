@@ -29,6 +29,9 @@ function main() {
 
     jQ("<div id='watch-media-berry-tmp' style='display: none' />").appendTo('body');
 
+    // Hide play button from video.js
+    jQ(".vjs-big-play-button").hide();
+
     var videotag = jQ("video");
     if (videotag.length > 0) {
         videotag.each(function (index) {
