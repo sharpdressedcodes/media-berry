@@ -33,8 +33,13 @@ function main() {
     if (videotag.length > 0) {
         videotag.each(function (index) {
 
+            var src = jQ(this).attr("src");
+
             // we use the first source tag - maybe we should use mp4
-            var src = jQ(this).children("source:first").attr("src");
+            if (src == null) {
+                src = jQ(this).children("source:first").attr("src");
+            }
+
             src = convertToAbsolute(src);
             var button = '<div style="border: 8px solid #969696; width: 230px; height: 132px; background: #E0E0E0; background: #E0E0E0; border-radius:5px; text-align:center; " class="media-berry-video"><img class="watch-media-berry" alt="' + src + '" style="cursor: pointer;" src="' + playbuttonimage + '"></div>';
 
