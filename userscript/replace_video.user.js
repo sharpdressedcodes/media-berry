@@ -57,7 +57,7 @@ function main() {
         });
     }
 
-    var youtubetag = jQ("#watch7-player");
+    var youtubetag = jQ("#player-api");
 
     if (youtubetag.length > 0) {
         var src = jQ(location).attr('href');
