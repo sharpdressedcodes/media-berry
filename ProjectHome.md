@@ -1,0 +1,1 @@
+Please see installation instruction here: http://lin.jojen.de/?p=32
